@@ -12,7 +12,6 @@ async function api(path, options = {}) {
   return data;
 }
 
-// Ilagay sa taas ng mga protected page. Halimbawa: requireLogin(["admin","staff"])
 function requireLogin(allowedRoles) {
   const user = getUser();
   if (!getToken() || !user) { window.location.href = "login.html"; return; }
