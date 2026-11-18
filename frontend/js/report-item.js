@@ -61,6 +61,6 @@ document.getElementById("reportForm").addEventListener("submit", (e) => {
     return showAlert("Click the map to pin the location.", "warning");
   }
   // TODO (backend integration): send the form data to the API, e.g.
-  // fetch("http://localhost:3000/api/items", { method: "POST", ... })
+  // fetch("http://localhost:8080/api/items", { method: "POST", ... })
   showAlert("Form is ready. API connection will be added during backend integration.", "info");
 });

@@ -1,28 +1,63 @@
-// Lab 11 placeholders for Login, Register and Profile. Real calls are added during backend integration.
-function showAlert(msg, type = "info") {
-  const box = document.getElementById("alertBox");
-  if (box) box.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
-}
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form');
+    const alertBox = document.getElementById('alertBox') || document.querySelector('.alert');
+    if (!form) return;
 
-// Collects the form data and logs it. Backend integration: replace the TODO with a call to api() from api.js.
-function bindForm(id, endpoint, check) {
-  const form = document.getElementById(id);
-  if (!form) return;
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(form));
-    const problem = check && check(data);
-    if (problem) return showAlert(problem, "warning");
-    console.log(endpoint, data);
-    // TODO: await api("<path>", { method: "POST", body: JSON.stringify(data) });
-    showAlert(`Form captured. ${endpoint} will be connected during backend integration.`);
-    const modalEl = form.closest(".modal");
-    if (modalEl) bootstrap.Modal.getInstance(modalEl)?.hide();
-  });
-}
+    const isRegister = window.location.pathname.includes('register.html');
+    const isLogin = window.location.pathname.includes('login.html');
 
-bindForm("loginForm", "POST /api/users/login");   // TODO: save token + user in localStorage, then go to dashboard.html
-bindForm("registerForm", "POST /api/users/register", (d) =>
-  d.password !== d.confirmPassword ? "Passwords do not match." : "");
-bindForm("profileForm", "PUT /api/users/me");
-bindForm("passwordForm", "PUT /api/users/me/password");
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const inputs = form.querySelectorAll('input');
+        const users = JSON.parse(localStorage.getItem('ibulfas_users')) || [];
+
+        if (isRegister) {
+            const userData = {
+                buId: inputs[0]?.value.trim(),
+                fullName: inputs[1]?.value.trim(),
+                email: inputs[2]?.value.trim(),
+                contact: inputs[3]?.value.trim(),
+                course: inputs[4]?.value.trim(),
+                password: inputs[5]?.value,
+                confirmPassword: inputs[6]?.value,
+                role: 'informant'
+            };
+
+            if (userData.password !== userData.confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            if (users.some(u => u.email === userData.email || u.buId === userData.buId)) {
+                alert('An account with this BU ID or Email already exists.');
+                return;
+            }
+
+            delete userData.confirmPassword;
+            users.push(userData);
+            localStorage.setItem('ibulfas_users', JSON.stringify(users));
+
+            if (alertBox) {
+                alertBox.className = 'alert alert-success';
+                alertBox.textContent = 'Account registered successfully! Redirecting to login...';
+            }
+            setTimeout(() => { window.location.href = 'login.html'; }, 1000);
+        }
+
+        if (isLogin) {
+            const identifier = inputs[0]?.value.trim();
+            const password = inputs[1]?.value;
+            const matchedUser = users.find(
+                u => (u.email === identifier || u.buId === identifier) && u.password === password
+            );
+
+            if (!matchedUser) {
+                alert('Invalid email/BU ID or password.');
+                return;
+            }
+
+            localStorage.setItem('ibulfas_current_user', JSON.stringify(matchedUser));
+            window.location.href = 'dashboard.html';
+        }
+    });
+});
