@@ -32,4 +32,5 @@
 /* Maps (Leaflet) */
 .map-box { height: 280px; border-radius: .5rem; }
 .map-box-lg { height: 420px; }
+
 #miniMap { height: 300px; border-radius: .5rem; }

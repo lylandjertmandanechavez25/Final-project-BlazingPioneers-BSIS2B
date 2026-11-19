@@ -1,4 +1,4 @@
-# Thunder Client test order (base URL http://localhost:8080)
+# Thunder Client test order (base URL http://localhost:3000)
 
 1. GET  /                          -> {"message":"Lost & Found API is running"}
 2. POST /api/users/register        body: {"name":"Juan","email":"juan@test.com","password":"123456"}

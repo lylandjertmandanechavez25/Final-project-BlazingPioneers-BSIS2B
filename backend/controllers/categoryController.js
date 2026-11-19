@@ -1,5 +1,6 @@
 const Category = require('../models/Category');
 
+
 exports.getCategories = async (req, res, next) => {
   try { res.json(await Category.find().sort('name')); } catch (err) { next(err); }
 };

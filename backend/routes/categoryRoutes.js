@@ -1,3 +1,14 @@
+const router = require('express').Router();
+const { protect, authorize } = require('../middleware/auth');
+const c = require('../controllers/categoryController');
+
+router.get('/', c.getCategories);
+router.post('/', protect, authorize('admin', 'staff'), c.createCategory);
+router.put('/:id', protect, authorize('admin', 'staff'), c.updateCategory);
+router.delete('/:id', protect, authorize('admin'), c.deleteCategory);
+
+module.exports = router;
+
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema(
