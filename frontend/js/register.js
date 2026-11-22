@@ -4,7 +4,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!registerForm) return;
 
-    registerForm.addEventListener('submit', (e) => {
+    const API_URL = 'http://localhost:8080';
+
+    function showMessage(message, type) {
+        if (alertBox) {
+            alertBox.className = `alert alert-${type}`;
+            alertBox.textContent = message;
+        } else {
+            alert(message);
+        }
+    }
+
+    registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const inputs = registerForm.querySelectorAll('input');
@@ -14,37 +25,34 @@ document.addEventListener('DOMContentLoaded', () => {
             email: inputs[2]?.value.trim(),
             contact: inputs[3]?.value.trim(),
             course: inputs[4]?.value.trim(),
-            password: inputs[5]?.value,
-            confirmPassword: inputs[6]?.value,
-            role: 'informant'
+            password: inputs[5]?.value
         };
+        const confirmPassword = inputs[6]?.value;
 
-        if (userData.password !== userData.confirmPassword) {
-            alert('Passwords do not match!');
+        if (userData.password !== confirmPassword) {
+            showMessage('Passwords do not match!', 'danger');
             return;
         }
 
-        const users = JSON.parse(localStorage.getItem('ibulfas_users')) || [];
+        try {
+            const response = await fetch(`${API_URL}/api/users/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userData)
+            });
 
-        const exists = users.some(u => u.email === userData.email || u.buId === userData.buId);
-        if (exists) {
-            alert('An account with this BU ID or Email already exists.');
-            return;
+            const data = await response.json();
+
+            if (response.ok) {
+                showMessage('Account registered successfully! Redirecting to login...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1200);
+            } else {
+                showMessage(data.message || 'Registration failed.', 'danger');
+            }
+        } catch (err) {
+            showMessage('Could not reach the server. Is it running?', 'danger');
         }
-
-        delete userData.confirmPassword;
-        users.push(userData);
-        localStorage.setItem('ibulfas_users', JSON.stringify(users));
-
-        if (alertBox) {
-            alertBox.className = 'alert alert-success';
-            alertBox.textContent = 'Account registered successfully! Redirecting to login...';
-        } else {
-            alert('Account registered successfully!');
-        }
-
-        setTimeout(() => {
-            window.location.href = 'login.html';
-        }, 1200);
     });
 });
