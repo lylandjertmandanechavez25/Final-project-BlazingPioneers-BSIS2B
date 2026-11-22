@@ -1,67 +1,37 @@
-const map = L.map("miniMap").setView([13.2970, 123.4860], 17);
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution: "&copy; OpenStreetMap contributors"
-}).addTo(map);
+if (requireAuth()) {
+  renderNavbar('report');
+  const today = new Date().toISOString().split('T')[0];
+  const dateInput = document.getElementById('dateOccurred');
+  dateInput.max = today; dateInput.value = today;
 
-let marker = null;
-map.on("click", (e) => {
-  if (marker) marker.setLatLng(e.latlng); else marker = L.marker(e.latlng).addTo(map);
-  document.getElementById("pinLat").value = e.latlng.lat;
-  document.getElementById("pinLng").value = e.latlng.lng;
-  document.getElementById("pinText").textContent =
-    `Pin: ${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
-});
+  api('/categories').then(cats => {
+    document.getElementById('category').innerHTML = '<option value="">Choose...</option>' + cats.map(c => `<option value="${c._id}">${esc(c.name)}</option>`).join('');
+  }).catch(err => showToast(err.message, 'danger'));
 
-// ---- Show "stored at" only for Found items ----
-document.querySelectorAll('input[name="type"]').forEach((r) =>
-  r.addEventListener("change", () => {
-    document.getElementById("storedAtGroup").style.display =
-      document.getElementById("typeFound").checked ? "block" : "none";
-  })
-);
-
-// ---- Image picker with preview ----
-const imageInput = document.getElementById("image");
-const preview = document.getElementById("imagePreview");
-const removeBtn = document.getElementById("removeImageBtn");
-const addBtn = document.getElementById("addImageBtn");
-const MAX_SIZE = 2 * 1024 * 1024;
-
-addBtn.addEventListener("click", () => imageInput.click());
-removeBtn.addEventListener("click", clearImage);
-
-imageInput.addEventListener("change", () => {
-  const file = imageInput.files[0];
-  if (!file) return;
-  if (!file.type.startsWith("image/")) { clearImage(); return showAlert("Please choose an image file.", "warning"); }
-  if (file.size > MAX_SIZE) { clearImage(); return showAlert("Image is too large. Choose one under 2 MB.", "warning"); }
-  document.getElementById("alertBox").innerHTML = "";
-  preview.src = URL.createObjectURL(file);
-  preview.hidden = false;
-  removeBtn.hidden = false;
-  addBtn.textContent = "Change image";
-});
-
-function clearImage() {
-  imageInput.value = "";
-  preview.hidden = true;
-  preview.removeAttribute("src");
-  removeBtn.hidden = true;
-  addBtn.textContent = "Add image";
+  document.getElementById('reportForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const msg = document.getElementById('msg');
+    const btn = document.getElementById('submitBtn');
+    const body = {
+      type: document.querySelector('input[name="type"]:checked').value,
+      title: document.getElementById('title').value.trim(),
+      category: document.getElementById('category').value,
+      description: document.getElementById('description').value.trim(),
+      location: document.getElementById('location').value.trim(),
+      dateOccurred: dateInput.value,
+      contact: document.getElementById('contact').value.trim(),
+      imageUrl: document.getElementById('imageUrl').value.trim()
+    };
+    if (!body.title || !body.category || !body.location || !body.dateOccurred)
+      return msg.innerHTML = '<div class="alert alert-danger">Item name, category, location and date are required.</div>';
+    btn.disabled = true;
+    try {
+      await api('/items', { method: 'POST', body });
+      showToast('Report submitted successfully!');
+      setTimeout(() => location.href = 'dashboard.html', 900);
+    } catch (err) {
+      msg.innerHTML = `<div class="alert alert-danger">${esc(err.message)}</div>`;
+      btn.disabled = false;
+    }
+  });
 }
-
-function showAlert(msg, type) {
-  document.getElementById("alertBox").innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
-}
-
-// ---- Submit (placeholder) ----
-document.getElementById("reportForm").addEventListener("submit", (e) => {
-  e.preventDefault();
-  if (!document.getElementById("pinLat").value) {
-    return showAlert("Click the map to pin the location.", "warning");
-  }
-  // TODO (backend integration): send the form data to the API, e.g.
-  // fetch("http://localhost:8080/api/items", { method: "POST", ... })
-  showAlert("Form is ready. API connection will be added during backend integration.", "info");
-
-});
