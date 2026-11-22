@@ -1,58 +1,26 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const registerForm = document.querySelector('form');
-    const alertBox = document.querySelector('.alert') || document.getElementById('alertBox');
+renderNavbar('register');
 
-    if (!registerForm) return;
+document.getElementById('registerForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const msg = document.getElementById('msg');
+  const btn = document.getElementById('submitBtn');
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const confirm = document.getElementById('confirm').value;
 
-    const API_URL = 'http://localhost:8080';
+  // Client-side validation (Phase 4)
+  if (!name || !email || !password) return msg.innerHTML = '<div class="alert alert-danger">All fields are required.</div>';
+  if (!/^\S+@\S+\.\S+$/.test(email)) return msg.innerHTML = '<div class="alert alert-danger">Enter a valid email address.</div>';
+  if (password.length < 6) return msg.innerHTML = '<div class="alert alert-danger">Password must be at least 6 characters.</div>';
+  if (password !== confirm) return msg.innerHTML = '<div class="alert alert-danger">Passwords do not match.</div>';
 
-    function showMessage(message, type) {
-        if (alertBox) {
-            alertBox.className = `alert alert-${type}`;
-            alertBox.textContent = message;
-        } else {
-            alert(message);
-        }
-    }
-
-    registerForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const inputs = registerForm.querySelectorAll('input');
-        const userData = {
-            buId: inputs[0]?.value.trim(),
-            fullName: inputs[1]?.value.trim(),
-            email: inputs[2]?.value.trim(),
-            contact: inputs[3]?.value.trim(),
-            course: inputs[4]?.value.trim(),
-            password: inputs[5]?.value
-        };
-        const confirmPassword = inputs[6]?.value;
-
-        if (userData.password !== confirmPassword) {
-            showMessage('Passwords do not match!', 'danger');
-            return;
-        }
-
-        try {
-            const response = await fetch(`${API_URL}/api/users/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(userData)
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                showMessage('Account registered successfully! Redirecting to login...', 'success');
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 1200);
-            } else {
-                showMessage(data.message || 'Registration failed.', 'danger');
-            }
-        } catch (err) {
-            showMessage('Could not reach the server. Is it running?', 'danger');
-        }
-    });
+  btn.disabled = true;
+  try {
+    const data = await api('/auth/register', { method: 'POST', body: { name, email, password } });
+    Auth.save(data.token, data.user);
+    location.href = 'dashboard.html';
+  } catch (err) {
+    msg.innerHTML = `<div class="alert alert-danger">${esc(err.message)}</div>`;
+  } finally { btn.disabled = false; }
 });
