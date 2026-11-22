@@ -1,36 +1,15 @@
-/* css/style.css - shared styles for iBULFAS */
-:root {
-  --bu-blue: #0d3b8c;
-  --bu-blue-dark: #092a63;
-  --bu-orange: #f28c28;
-}
-
-.hero { background: linear-gradient(135deg, #0d6efd, #052c65); }
-.card { border-radius: .6rem; }
-#miniMap { height: 300px; border-radius: .5rem; }
-.item-photo { height: 220px; border-top-left-radius: .6rem; border-top-right-radius: .6rem; }
-.avatar { width: 80px; height: 80px; border-radius: 50%; background: #0d6efd; color: #fff; font-size: 2rem; display: flex; align-items: center; justify-content: center; }
-
-/* Navbar and footer */
-.navbar { background-color: var(--bu-blue); }
-.navbar .nav-link.active { color: #fff; border-bottom: 2px solid var(--bu-orange); }
-.site-footer { background-color: var(--bu-blue-dark); color: #dbe4f5; }
-
-/* Buttons */
-.btn-primary { background-color: var(--bu-blue); border-color: var(--bu-blue); }
-.btn-primary:hover, .btn-primary:focus { background-color: var(--bu-blue-dark); border-color: var(--bu-blue-dark); }
-.btn-outline-primary { color: var(--bu-blue); border-color: var(--bu-blue); }
-.btn-outline-primary:hover { background-color: var(--bu-blue); border-color: var(--bu-blue); }
-
-/* Tabs */
-.nav-tabs .nav-link { color: #495057; }
-.nav-tabs .nav-link.active { color: var(--bu-blue); font-weight: 600; }
-
-/* Cards */
-.card { border: 0; border-radius: .6rem; }
-
-/* Maps (Leaflet) */
-.map-box { height: 280px; border-radius: .5rem; }
-.map-box-lg { height: 420px; }
-
-#miniMap { height: 300px; border-radius: .5rem; }
+:root { --brand: #0d6efd; --brand-dark: #0a4fb3; }
+body { background: #f5f7fb; min-height: 100vh; display: flex; flex-direction: column; }
+main { flex: 1; }
+.navbar-brand i { color: #ffc107; }
+.hero { background: linear-gradient(135deg, var(--brand-dark), var(--brand)); color: #fff; padding: 5rem 0; }
+.hero .btn-light { font-weight: 600; }
+.stat-card { border: 0; border-radius: 1rem; box-shadow: 0 4px 14px rgba(0,0,0,.06); }
+.stat-card .num { font-size: 2.2rem; font-weight: 700; }
+.item-card { border: 0; border-radius: 1rem; box-shadow: 0 4px 14px rgba(0,0,0,.07); transition: transform .15s; height: 100%; }
+.item-card:hover { transform: translateY(-3px); }
+.item-card .thumb { height: 170px; object-fit: cover; border-radius: 1rem 1rem 0 0; background: #e9eef7; }
+.thumb-placeholder { height: 170px; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: #9aa7bd; background: #e9eef7; border-radius: 1rem 1rem 0 0; }
+.auth-card { max-width: 440px; margin: 3rem auto; border: 0; border-radius: 1rem; box-shadow: 0 6px 24px rgba(0,0,0,.09); }
+footer { background: #fff; border-top: 1px solid #e3e8f0; }
+.toast-container { z-index: 2000; }
