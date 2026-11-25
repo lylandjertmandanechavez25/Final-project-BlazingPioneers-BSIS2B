@@ -1,48 +1,47 @@
 # iBULFAS - Integrated BicolU Lost and Found Automated System
 
-Group 4 - Blazing Pioneers (BSIS 2B)
+# Backend – Lost & Found API
 
-## What was implemented this week (Phase 3: Frontend)
+## Run locally
+```bash
+cd backend
+npm install
+npm start          # nodemon server.js  -> http://localhost:3000
+```
+Edit `.env` first: `MONGO_URI` (local MongoDB or Atlas), `PORT`, `JWT_SECRET`.
 
-HTML, CSS, and Bootstrap 5 pages for all user roles. Forms are placeholders
-(`action="#"`) with sample scripts in `/frontend/js/`; API connection will be
-added during backend integration.
+## Models
+`User`, `Category`, `Item`, `Claim` (see `/models`).
 
-| Page | Purpose |
-|---|---|
-| `index.html` | Landing page |
-| `login.html`, `register.html` | Account access and profiling |
-| `dashboard.html` | Overview per role |
-| `profile.html` | View and update user info |
-| `report-item.html` | Report a lost or found item (with mini map pin and photo) |
-| `items.html` | Browse and filter items |
-| `item-details.html` | Item details, map pin, and Claim button |
-| `claim.html` | File a claim with proof of ownership |
-| `my-claims.html` | Tracking status of reports and claims |
-| `inventory.html` | Staff/Admin: items kept in the office |
-| `manage-claims.html` | Staff/Admin: approve or reject claims |
-| `manage-users.html` | Admin: manage users and roles |
-| `locations.html` | Campus map and list of locations |
+## Connection setup
+`config/db.js` connects with Mongoose using `MONGO_URI` and seeds default categories.
+
+## Routes
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| POST | /api/auth/register | public | Register (first user becomes admin) |
+| POST | /api/auth/login | public | Login, returns JWT |
+| GET/PUT | /api/auth/me | user | Get / update profile |
+| GET | /api/categories | public | List categories |
+| GET | /api/items | public | List items (`type, category, status, q, reportedBy, page, limit`) |
+| GET | /api/items/stats | public | Counts for home page |
+| GET | /api/items/:id | public | One item |
+| POST | /api/items | user | Create item |
+| PUT | /api/items/:id | owner/admin | Update item |
+| DELETE | /api/items/:id | owner/admin | Delete item |
+| GET | /api/claims | user | Own claims + claims on own items (admin: all) |
+| POST | /api/claims | user | Submit claim |
+| PUT | /api/claims/:id/status | owner/admin | `{status: approved|rejected}` |
+| DELETE | /api/claims/:id | claimant/admin | Delete claim |
+| GET/PUT/DELETE | /api/users[/:id] | admin | Manage users |
+
+## Testing with Thunder Client / Postman
+1. `POST /api/auth/register` → copy `token`.
+2. Add header `Authorization: Bearer <token>` for protected routes.
+3. `GET /api/categories` → copy a category `_id`, then `POST /api/items` with `{ "title":"Wallet","type":"found","category":"<id>","location":"Library","dateOccurred":"2026-10-20" }`.
+4. Test `GET`, `PUT /api/items/:id`, `DELETE /api/items/:id`.
 
 
-## How it aligns with the use case and ERD
 
-**User roles (use case):** Admin, Staff, and Informant.
-
-- **Users** (`idNumber`, `fullName`, `email`, `password`, `course`, `contactNumber`, `role`):
-  `register.html`, `profile.html`, `manage-users.html`
-- **Items** (`itemName`, `description`, `category`, `type`, `status`, `imageUrl`,
-  `locationId`, `pin`, `storedAt`, `dateLostFound`):
-  `report-item.html`, `items.html`, `item-details.html`, `inventory.html`
-- **Claims** (`itemId`, `proof`, `claimDate`, `status`, `processedBy`, `processedAt`):
-  `claim.html`, `my-claims.html`, `manage-claims.html`
-- **Locations** (`name`, `building`, `coordinates`): `locations.html` and the
-  location dropdown and mini map in `report-item.html`
-
-**Key features (proposal):** Profiling System, Reporting, Claiming, Inventory,
-Tracking Status, and Mini Map.
-
-## Tech
-HTML5, CSS3, Bootstrap 5 (CDN), JavaScript, Leaflet.js (OpenStreetMap)
 
 
