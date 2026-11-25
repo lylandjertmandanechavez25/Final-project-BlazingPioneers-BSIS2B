@@ -3,9 +3,9 @@
 > **Course:** IS Elec 2 / IT 112 – Web Systems and Technologies
 > **Section:** BSIS 2B | **Group 4:** BlazingPioneers
 > **Adviser:** Guillermo V. Red Jr.
-> **Repository:** https://l.messenger.com/l.php?u=https%3A%2F%2Fgithub.com%2Flylandjertmandanechavez25%2FFinal-project-BlazingPioneers-BSIS2B.git&h=AUDA6aqKhVOWTlVSEQT_rsDxa4uo5d9Pc7bZQJJ28ud6HinmQm6l3fZAE6t5maeBu8K6B9r5bQSH79BS5TzdMT5XnWWw-qVwTEeAxRpUDqngAXZRJBt5tQlnvgmnOQM
+> **Repository:** https://github.com/lylandjertmandanechavez25/Final-project-BlazingPioneers-BSIS2B.git
 
-A full-stack web application for **Bicol University Polangui** where students and staff can report **lost** and **found** items, search the listings, and submit **ownership claims** that are approved or rejected by the finder or an administrator.
+A full-stack web application for **Bicol University** where students and staff can report **lost** and **found** items, search the listings, and submit **ownership claims** that are approved or rejected by the finder or an administrator.
 
 ---
 
