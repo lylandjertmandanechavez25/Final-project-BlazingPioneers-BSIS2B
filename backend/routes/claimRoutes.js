@@ -5,6 +5,6 @@ const c = require('../controllers/claimController');
 router.post('/', protect, c.createClaim);
 router.get('/', protect, c.getClaims);
 
-router.put('/:id/review', protect, adminOnly, c.reviewClaim);
+router.put('/:id/review', protect, adminOnly, c.updateClaimStatus);
 
 module.exports = router;
