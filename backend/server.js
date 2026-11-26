@@ -15,7 +15,7 @@ app.use('/api/auth', require('./routes/authroutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/items', require('./routes/itemRoutes'));
 app.use('/api/claims', require('./routes/claimRoutes'));
-app.use('/api/categories', require('./routes/categoryRoutes'));
+// app.use('/api/categories', require('./routes/categoryRoutes'));
 
 // Serve the frontend so everything runs at http://localhost:3000
 app.use(express.static(path.join(__dirname, '../frontend')));
